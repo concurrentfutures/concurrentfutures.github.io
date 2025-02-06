@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Projects</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"> <!-- Font Awesome for icons -->
+    <style>
+        /* General Styles */
+        body {
+            background-color: #0d0d0d;
+            color: #ff3333;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        /* Container */
+        .container {
+            border: 2px solid #ff3333;
+            padding: 20px;
+            background-color: #111;
+            width: 80%;
+            max-width: 900px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        /* Title */
+        h1 {
+            color: #ff3333;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        /* Project Card */
+        .project-card {
+            background-color: #222;
+            border: 1px solid #ff3333;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .project-card h2 {
+            color: #ff3333;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .project-card p {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .project-card a {
+            color: #ff3333;
+            text-decoration: none;
+            font-size: 16px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .project-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Section */
+        footer {
+            background-color: #111;
+            color: #ff3333;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            border-top: 2px solid #ff3333;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+
+        footer a {
+            color: #ff3333;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .project-card h2 {
+                font-size: 18px;
+            }
+
+            .project-card p {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>My Projects</h1>
+
+        <!-- Project 1: CWS-Sockets -->
+        <div class="project-card">
+            <h2>CWS-Sockets</h2>
+            <p>A custom WebSocket implementation made in C. This project allows for more efficient and customizable socket communication in various applications.</p>
+            <a href="https://github.com/concurrentfutures/CWS-Sockets" target="_blank"><i class="fab fa-github"></i> View on GitHub</a>
+        </div>
+
+        <!-- Project 2: get-token -->
+        <div class="project-card">
+            <h2>get-token</h2>
+            <p>A tool written in Rust that helps retrieve your Discord token. It's a simple, fast, and effective solution for developers needing Discord tokens.</p>
+            <a href="https://github.com/concurrentfutures/get-token" target="_blank"><i class="fab fa-github"></i> View on GitHub</a>
+        </div>
+
+        <!-- Project 3: SimpleCord -->
+        <div class="project-card">
+            <h2>SimpleCord</h2>
+            <p>A custom API wrapper for Discord, which was previously known as SimpleDiscord. It provides an easy-to-use interface for interacting with the Discord API in your projects.</p>
+            <a href="https://github.com/concurrentfutures/simplediscord" target="_blank"><i class="fab fa-github"></i> View on GitHub</a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Made by <a href="https://github.com/concurrentfutures" target="_blank">Monokuma</a> &copy; 2025</p>
+    </footer>
+
+</body>
+</html>
