@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monokuma</title>
+    <title>Monokuma - Projects</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
         
@@ -36,6 +35,11 @@
             text-shadow: 0 0 15px var(--neon-red);
         }
 
+        .hover-tilt:hover {
+            transform: rotateX(5deg) rotateY(-5deg) scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+
         .comet {
             position: absolute;
             width: 2px;
@@ -55,90 +59,93 @@
         }
         
         @keyframes blink { 50% { opacity: 0; } }
-
-        .hover-tilt:hover {
-            transform: rotateX(5deg) rotateY(-5deg) scale(1.05);
-            transition: transform 0.3s ease-in-out;
-        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen">
 
-    <!-- Cyberpunk Background -->
-    <div class="fixed inset-0 pointer-events-none">
-        <div class="comet" style="left: 10%; animation-duration: 8s"></div>
-        <div class="comet" style="left: 30%; animation-duration: 10s"></div>
-        <div class="comet" style="left: 70%; animation-duration: 12s"></div>
-    </div>
+    <!-- Cyberpunk Background Animation -->
+    <div class="background-animations"></div>
 
-    <!-- Navigation -->
-    <nav class="fixed top-6 bg-black/50 px-8 py-3 rounded-lg backdrop-blur-lg shadow-lg z-50">
+    <!-- Centered Floating Header -->
+    <nav class="fixed top-6 w-auto bg-black/50 px-8 py-3 rounded-lg backdrop-blur-lg shadow-lg z-50 flex justify-center items-center">
         <ul class="flex space-x-6 text-sm">
-            <li><a href="/" class="neon-text glow-hover">Home</a></li>
-            <li><a href="projects.html" class="neon-text glow-hover">Projects</a></li>
+            <li><a href="/" class="glow-hover neon-text">Home</a></li>
+            <li><a href="#projects" class="glow-hover neon-text">Projects</a></li>
         </ul>
     </nav>
 
-    <!-- Main Content -->
-    <main class="relative z-10 text-center w-full max-w-2xl px-4">
+    <!-- Hero Section -->
+    <section class="mt-32 pt-16 text-center">
+        <h2 class="text-3xl neon-text">My Open Source</h2>
+        <p id="typing" class="text-xl neon-text typing"></p>
+    </section>
 
-        <!-- Hero Section -->
-        <section class="mt-32">
-            <img src="https://media0.giphy.com/media/UsTL1WhfyCf6AiHKEM/giphy.gif" 
-                 alt="Profile" 
-                 class="w-32 h-32 rounded-full neon-border mx-auto mb-6 hover:rotate-12 transition-transform">
-            <h1 class="text-4xl neon-text mb-4">
-                𝙼𝚘𝚗𝚘𝚔𝚞𝚖𝚊
-                <span class="typing"></span>
-            </h1>
-            <p class="text-xl text-gray-400">Uni Student and interested in low level Programming</p>
-        </section>
+    <!-- Projects Grid -->
+    <section id="projects" class="mt-20 w-3/4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- CWS-Sockets -->
+            <div class="p-5 bg-[#1f1b2e] rounded-lg neon-border hover-tilt">
+                <h3 class="text-xl glow-hover">🔧 CWS-Sockets</h3>
+                <p class="text-gray-400">Custom WebSocket implementation in C</p>
+                <a href="https://github.com/concurrentfutures/CWS-Sockets" 
+                   class="neon-text hover:glow-hover inline-block mt-3">
+                   <i class="fab fa-github"></i> View Source
+                </a>
+            </div>
 
-        <!-- Social Links -->
-        <section class="mt-16 grid gap-4">
-            <a href="https://youtube.com/@concurrentfutures" 
-               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
-               <i class="fab fa-youtube mr-2 neon-text"></i>
-               <span class="glow-hover">YouTube Channel</span>
-            </a>
+            <!-- get-token -->
+            <div class="p-5 bg-[#1f1b2e] rounded-lg neon-border hover-tilt">
+                <h3 class="text-xl glow-hover">🔑 get-token</h3>
+                <p class="text-gray-400">Discord token tool in Rust</p>
+                <a href="https://github.com/concurrentfutures/get-token"
+                   class="neon-text hover:glow-hover inline-block mt-3">
+                   <i class="fab fa-github"></i> View Source
+                </a>
+            </div>
 
-            <a href="https://discord.gg/MjahU4Cq" 
-               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
-               <i class="fab fa-discord mr-2 neon-text"></i>
-               <span class="glow-hover">Add me on Discord</span>
-            </a>
+            <!-- SimpleCord -->
+            <div class="p-5 bg-[#1f1b2e] rounded-lg neon-border hover-tilt">
+                <h3 class="text-xl glow-hover">🤖 SimpleCord</h3>
+                <p class="text-gray-400">Discord API wrapper</p>
+                <a href="https://github.com/concurrentfutures/SimpleCord"
+                   class="neon-text hover:glow-hover inline-block mt-3">
+                   <i class="fab fa-github"></i> View Source
+                </a>
+            </div>
+        </div>
+    </section>
 
-            <a href="mailto:monokuma@child.pizza" 
-               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
-               <i class="fas fa-envelope mr-2 neon-text"></i>
-               <span class="glow-hover">Contact Email</span>
-            </a>
-
-            <a href="https://github.com/concurrentfutures" 
-               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
-               <i class="fab fa-github mr-2 neon-text"></i>
-               <span class="glow-hover">GitHub Profile</span>
-            </a>
-        </section>
-
-        <!-- Footer -->
-        <footer class="mt-16 py-8 text-sm neon-text">
-            <p>© 2025 Monokuma — <a href="projects.html" class="glow-hover">View Projects</a></p>
-        </footer>
-    </main>
+    <!-- Footer -->
+    <footer class="mt-20 p-5 text-center w-full bg-[#1f1b2e]">
+        <p class="text-sm neon-text">
+            © 2025 Monokuma - 
+            <a href="https://github.com/concurrentfutures" class="glow-hover">GitHub</a>
+        </p>
+    </footer>
 
     <script>
         // Typing Effect
-        const text = "Redefining System Boundaries";
+        const text = "Projects that push boundaries.";
         let index = 0;
         function typeEffect() {
             if (index < text.length) {
-                document.querySelector(".typing").innerHTML += text.charAt(index);
+                document.getElementById("typing").innerHTML += text.charAt(index);
                 index++;
                 setTimeout(typeEffect, 100);
             }
         }
         typeEffect();
+
+        // Comet Animation
+        function createComet() {
+            const comet = document.createElement("div");
+            comet.classList.add("comet");
+            comet.style.left = Math.random() * window.innerWidth + "px";
+            comet.style.animationDuration = Math.random() * 2 + 2 + "s";
+            document.querySelector(".background-animations").appendChild(comet);
+            setTimeout(() => comet.remove(), 4000);
+        }
+        setInterval(createComet, 300);
     </script>
 </body>
 </html>
