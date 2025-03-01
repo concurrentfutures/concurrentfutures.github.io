@@ -3,163 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monokuma - Website</title>
+    <title>Monokuma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        /* General Styles */
-        body {
-            background-color: #0d0d0d;
-            color: #ff3333;
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            flex-wrap: wrap;
-            text-align: center;
-        }
-
-        /* Container */
-        .container {
-            border: 2px solid #ff3333;
-            padding: 20px;
-            background-color: #111;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        /* Profile Picture */
-        .profile-pic {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%; 
-            margin-bottom: 15px;
-        }
-
-        /* Name */
-        .name {
-            color: #ff3333;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-      
-        .line {
-            border-bottom: 2px solid #ff3333;
-            margin-bottom: 15px;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
         
-        .button {
-            background: #cc0000; 
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            width: 100%;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 5px;
-            text-align: left;
+        :root {
+            --neon-red: #ff3333;
+            --dark-bg: #17141d;
+            --card-bg: #1f1b2e;
         }
 
-        .button:hover {
-            background: darkred;
+        body {
+            background-color: var(--dark-bg);
+            color: #d9d9d9;
+            font-family: 'Fira Code', monospace;
+            overflow-x: hidden;
         }
 
-        /* Social Media Links */
-        .social-links {
-            margin-top: 20px;
+        .neon-text { 
+            color: var(--neon-red); 
+            text-shadow: 0 0 8px var(--neon-red);
         }
 
-        /* Button Icons */
-        .button-icons {
-            margin-right: 10px; 
+        .neon-border { 
+            box-shadow: 0 0 8px var(--neon-red);
+            border: 1px solid var(--neon-red);
         }
 
-        /* Footer */
-        footer {
-            background-color: #111;
-            color: #ff3333;
-            padding: 15px;
-            width: 100%;
-            text-align: center;
-            border-top: 2px solid #ff3333;
-            position: fixed;
-            bottom: 0;
-            left: 0;
+        .glow-hover:hover { 
+            text-shadow: 0 0 15px var(--neon-red);
         }
 
-        footer a {
-            color: #ff3333;
-            text-decoration: none;
-            margin: 0 5px;
+        .comet {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(180deg, rgba(255,51,51,0.8), rgba(0,0,0,0));
+            animation: fall linear infinite;
         }
 
-        footer a:hover {
-            text-decoration: underline;
+        @keyframes fall {
+            from { transform: translateY(-100vh) translateX(0); opacity: 1; }
+            to { transform: translateY(100vh) translateX(10px); opacity: 0; }
         }
 
-        /* Responsive Layout */
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-                padding: 15px;
-            }
-
-            .button {
-                font-size: 14px;
-                padding: 8px;
-            }
-
-            .profile-pic {
-                width: 80px;
-                height: 80px;
-            }
-
-            .name {
-                font-size: 20px;
-            }
+        .typing::after { 
+            content: '|'; 
+            animation: blink 0.8s infinite; 
         }
+        
+        @keyframes blink { 50% { opacity: 0; } }
 
+        .hover-tilt:hover {
+            transform: rotateX(5deg) rotateY(-5deg) scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
     </style>
 </head>
-<body>
+<body class="flex flex-col items-center justify-center min-h-screen">
 
-    <div class="container">
-        <!-- Profile Picture -->
-        <img class="profile-pic" src="https://media0.giphy.com/media/UsTL1WhfyCf6AiHKEM/giphy.gif?cid=6c09b952vkg0kzoztdbre4yczkyazxzvef8q1p06973s5sij&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g" alt="Profile Picture">
-
-        <!-- Name -->
-        <div class="name">𝙼𝚘𝚗𝚘𝚔𝚞𝚖𝚊</div>
-        
-        <div class="line"></div>
-
-        <div class="social-links">
-            <a href="https://youtube.com/@concurrentfutures?si=6Ivw9_N4PJVpIMFd" target="_blank">
-                <button class="button"><i class="fab fa-youtube"></i> YouTube Channel — concurrentfutures</button>
-            </a>
-            <a href="https://discord.gg/MjahU4Cq" target="_blank">
-                <button class="button"><i class="fab fa-discord"></i> Discord Account — concurrent.futures</button>
-            </a>
-            <a href="mailto:monokuma@child.pizza">
-                <button class="button"><i class="fas fa-envelope"></i> Email — monokuma@child.pizza</button>
-            </a>
-            <a href="https://github.com/concurrentfutures" target="_blank">
-                <button class="button"><i class="fab fa-github"></i> GitHub — concurrentfutures</button>
-            </a>
-        </div>
+    <!-- Cyberpunk Background -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="comet" style="left: 10%; animation-duration: 8s"></div>
+        <div class="comet" style="left: 30%; animation-duration: 10s"></div>
+        <div class="comet" style="left: 70%; animation-duration: 12s"></div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p><a href="https://pornhub.com" target="_blank">! @Monokuma</a> &copy; 2025</p>
-    </footer>
+    <!-- Navigation -->
+    <nav class="fixed top-6 bg-black/50 px-8 py-3 rounded-lg backdrop-blur-lg shadow-lg z-50">
+        <ul class="flex space-x-6 text-sm">
+            <li><a href="/" class="neon-text glow-hover">Home</a></li>
+            <li><a href="projects.html" class="neon-text glow-hover">Projects</a></li>
+        </ul>
+    </nav>
 
+    <!-- Main Content -->
+    <main class="relative z-10 text-center w-full max-w-2xl px-4">
+
+        <!-- Hero Section -->
+        <section class="mt-32">
+            <img src="https://media0.giphy.com/media/UsTL1WhfyCf6AiHKEM/giphy.gif" 
+                 alt="Profile" 
+                 class="w-32 h-32 rounded-full neon-border mx-auto mb-6 hover:rotate-12 transition-transform">
+            <h1 class="text-4xl neon-text mb-4">
+                
+                <span class="typing"></span>
+            </h1>
+            <p class="text-xl text-gray-400">Uni Student and interested in low level Programming</p>
+        </section>
+
+        <!-- Social Links -->
+        <section class="mt-16 grid gap-4">
+            <a href="https://youtube.com/@concurrentfutures" 
+               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
+               <i class="fab fa-youtube mr-2 neon-text"></i>
+               <span class="glow-hover">YouTube Channel</span>
+            </a>
+
+            <a href="https://discord.gg/MjahU4Cq" 
+               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
+               <i class="fab fa-discord mr-2 neon-text"></i>
+               <span class="glow-hover">Add me on Discord</span>
+            </a>
+
+            <a href="mailto:monokuma@child.pizza" 
+               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
+               <i class="fas fa-envelope mr-2 neon-text"></i>
+               <span class="glow-hover">Contact Email</span>
+            </a>
+
+            <a href="https://github.com/concurrentfutures" 
+               class="p-4 bg-[#1f1b2e] neon-border rounded-lg hover-tilt transition-all">
+               <i class="fab fa-github mr-2 neon-text"></i>
+               <span class="glow-hover">GitHub Profile</span>
+            </a>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-16 py-8 text-sm neon-text">
+            <p>© 2025 Monokuma — <a href="projects.html" class="glow-hover">View Projects</a></p>
+        </footer>
+    </main>
+
+    <script>
+        // Typing Effect
+        const text = "𝙼𝚘𝚗𝚘𝚔𝚞𝚖𝚊";
+        let index = 0;
+        function typeEffect() {
+            if (index < text.length) {
+                document.querySelector(".typing").innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeEffect, 100);
+            }
+        }
+        typeEffect();
+    </script>
 </body>
-                  </html>
+</html>
