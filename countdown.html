@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TBC - Cooldown</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #FF0000;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center">
+    <h1 class="text-4xl font-bold uppercase tracking-wider mb-6">TBC - The Bat Cave</h1>
+    <div class="text-2xl">You can use the tool again in:</div>
+    <div id="cooldown" class="text-3xl font-mono mt-4">12:00:00</div>
+
+    <script>
+        const COOLDOWN_DURATION = 12 * 60 * 60; // 12 hours in seconds
+        let cooldownEnd = localStorage.getItem("cooldownEnd");
+        if (!cooldownEnd) {
+            cooldownEnd = Date.now() / 1000 + COOLDOWN_DURATION;
+            localStorage.setItem("cooldownEnd", cooldownEnd);
+        } else {
+            cooldownEnd = parseFloat(cooldownEnd);
+        }
+
+        function updateCooldown() {
+            const now = Date.now() / 1000;
+            const remaining = cooldownEnd - now;
+            if (remaining <= 0) {
+                localStorage.removeItem("cooldownEnd");
+                window.location.href = "index.html";
+            } else {
+                const hours = Math.floor(remaining / 3600);
+                const minutes = Math.floor((remaining % 3600) / 60);
+                const seconds = Math.floor(remaining % 60);
+                document.getElementById("cooldown").innerHTML = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        setInterval(updateCooldown, 1000);
+        updateCooldown();
+    </script>
+</body>
+</html>
